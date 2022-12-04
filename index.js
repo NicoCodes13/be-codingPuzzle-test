@@ -72,7 +72,7 @@ async function cache_store(key, value) {
 async function cache_retrieve(key) {
   let promise = new Promise((resolve, reject) => {
     if (key === 0) {
-      setTimeout(() => reject(new Error('something go wrong')), 1000);
+      setTimeout(() => reject(new Error('Error en cache retrive'), 3000));
     } else {
       setTimeout(() => resolve(Data[key - 1]), 1000);
     }
@@ -86,7 +86,7 @@ async function cache_retrieve(key) {
 async function slow_funtion(input) {
   let promise = new Promise((resolve, reject) => {
     if (input === 0) {
-      setTimeout(() => reject(new Error("don't found data")), 3000);
+      setTimeout(() => reject(new Error('Error in slow function'), 3000));
     } else {
       setTimeout(() => resolve(Data[input - 1]), 5000);
     }
@@ -99,25 +99,30 @@ async function slow_funtion(input) {
 let promise = new Promise((resolve, reject) => resolve(2));
 
 //assuming that the key and the input be the same
-function memoize(slow_funtion) {
-  console.log(arguments[1]);
+
+// i add a new parameter to make easier the invoke of functions
+// this function return a promise depending on which function finishes first
+// knowing that asyn functions return a promise i use this to with asynchronism
+// always store the new data in cache even when the data be return.
+function memoize(slow_funtion, key) {
   return new Promise(function (resolve, reject) {
-    slow_funtion(2)
+    slow_funtion(key)
       .then((data) => {
         cache_store(data['id'] - 1, data);
         resolve(data);
       })
       .catch((err) => reject(err));
-    cache_retrieve(2)
+    cache_retrieve(key)
       .then((data) => {
         resolve(data);
       })
       .catch((err) => reject(err));
   });
 }
-memoize(slow_funtion).then((data) => console.log(data));
-
-// ! Bonus Answer
+memoize(slow_funtion, 2)
+  .then((data) => console.log(data))
+  .catch((err) => console.error(err.message));
+// // ! Bonus Answer
 // to have 95% accuracy knowing that the cached data
 // its accuracy is approximately 1000 seconds
 // we can take that 5% of accuracy to generate a window
