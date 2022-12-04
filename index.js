@@ -52,6 +52,7 @@ async function cache_retrieve(key) {
 
   return result;
 }
+//fetch data from slow data source
 async function slow_funtion(input) {
   let promise = new Promise((resolve, reject) => {
     if (input === 0) {
@@ -65,3 +66,9 @@ async function slow_funtion(input) {
 
   return result;
 }
+function memoize(slow_funtion) {
+  slow_funtion.then((data) => console.log(data));
+  return fast_function;
+}
+
+memoize(slow_funtion(1));
