@@ -100,6 +100,7 @@ let promise = new Promise((resolve, reject) => resolve(2));
 
 //assuming that the key and the input be the same
 function memoize(slow_funtion) {
+  console.log(arguments[1]);
   return new Promise(function (resolve, reject) {
     slow_funtion(2)
       .then((data) => {
